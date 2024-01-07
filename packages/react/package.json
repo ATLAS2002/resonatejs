@@ -1,29 +1,28 @@
 {
-  "name": "react",
+  "name": "@resonatejs/react",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.tsx",
+  "exports": {
+    ".": "./src/index.tsx",
+    "./*": "./src/*"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "lint": "eslint . --max-warnings 0"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@storybook/addon-essentials": "^7.6.7",
-    "@storybook/addon-interactions": "^7.6.7",
-    "@storybook/addon-links": "^7.6.7",
-    "@storybook/addon-onboarding": "^1.0.10",
-    "@storybook/blocks": "^7.6.7",
-    "@storybook/react": "^7.6.7",
-    "@storybook/react-webpack5": "^7.6.7",
-    "@storybook/test": "^7.6.7",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/react": "^18.2.47",
+    "eslint": "^8.53.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "storybook": "^7.6.7"
+    "storybook": "^7.6.7",
+    "typescript": "^5.2.2"
   },
   "peerDependencies": {
     "react": "^18.2.0",
