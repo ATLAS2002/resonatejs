@@ -1,21 +1,30 @@
 import { useRef } from "react";
 import { extractElementFromRef } from "../utils";
-import { Attributes } from "../types";
+import { Attributes, Prettify } from "../types";
 
-interface GlowProps {
+interface GlowConfig {
   highlight: string;
   fade: string;
+  stay: boolean;
 }
 
-export default function (props?: GlowProps) {
+const baseConfig: Prettify<GlowConfig> = {
+  highlight: "#ffffff55",
+  fade: "#0000000f",
+  stay: false,
+};
+
+export default function (configs: Prettify<Partial<GlowConfig>>) {
+  const { highlight, fade, stay } = { ...baseConfig, ...configs };
+
   const glowRef = useRef<HTMLDivElement>(null);
 
-  const resonate = ({ getPosition, getCenter }: Required<Attributes>) => {
+  const resonate = ({ getPosition, getDistanceFromCenter }: Attributes) => {
     const glow = extractElementFromRef(glowRef);
     const elm = getPosition();
 
-    const handleMove = (evt: MouseEvent) => {
-      const center = getCenter({
+    const handleMouseMove = (evt: MouseEvent) => {
+      const center = getDistanceFromCenter({
         mousePosition: {
           x: evt.clientX,
           y: evt.clientY,
@@ -28,23 +37,32 @@ export default function (props?: GlowProps) {
         },
       });
 
-      glow.style.display = "block";
-      glow.style.backgroundImage = `
+      glow.style.background = `radial-gradient(
         circle at
-        ${center.x * 2 + elm.width / 2}px
-        ${center.y * 2 + elm.height / 2}px,
-        ${props?.highlight ?? "#ffffff55"},
-        ${props?.fade ?? "#0000000f"}
-      `;
+        ${center.x + elm.width / 2}px
+        ${center.y + elm.height / 2}px,
+        ${highlight},
+        ${fade}
+      )`;
     };
-    glow.addEventListener("mousemove", handleMove);
+    const handleMouseEnter = () => {
+      glow.addEventListener("mousemove", handleMouseMove);
+    };
+    const handleMouseLeave = () => {
+      if (stay === false) glow.style.background = "";
+      glow.removeEventListener("mousemove", handleMouseMove);
+    };
+
+    glow.addEventListener("mouseenter", handleMouseEnter);
+    glow.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
-      glow.removeEventListener("mousemove", handleMove);
+      glow.removeEventListener("mouseleave", handleMouseLeave);
     };
   };
 
   return {
+    title: "glow",
     ref: glowRef,
     resonate,
   };

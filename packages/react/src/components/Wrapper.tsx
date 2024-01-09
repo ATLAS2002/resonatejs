@@ -10,7 +10,7 @@ type JSXAttributes<T> = DetailedHTMLProps<HTMLAttributes<T>, T>;
 
 interface Props<T> extends JSXAttributes<T> {
   children: JSX.Element;
-  tracker: Record<string, RefObject<T>>;
+  trackers: Record<string, RefObject<T>>;
 }
 
 const baseStyle: Partial<CSSProperties> = {
@@ -20,29 +20,36 @@ const baseStyle: Partial<CSSProperties> = {
 };
 
 /**
- *
  * @param children
- * @param tracker - pass the ref object obtained from useResonate hook
+ * @param trackers - pass the ref object obtained from useResonate hook
  */
 export const ResonateWrapper: FC<Props<HTMLDivElement>> = ({
   children,
-  tracker,
+  trackers,
   ...props
 }) => {
   return (
     <div
-      ref={tracker.containerRef}
+      ref={trackers.container}
       style={{
         ...baseStyle,
         ...props.style,
       }}
       {...props}
     >
-      <div className="absolute w-full h-full">{children}</div>
-      <div
-        ref={tracker.glowRef}
-        className="bg-white h-full z-50 opacity-20 pointer-events-none absolute w-full"
-      />
+      <div style={{ position: "absolute", width: "100%", height: "100%" }}>
+        {children}
+      </div>
+      {trackers.glow && (
+        <div
+          ref={trackers.glow}
+          style={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+          }}
+        />
+      )}
     </div>
   );
 };

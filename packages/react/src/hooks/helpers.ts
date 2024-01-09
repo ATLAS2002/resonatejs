@@ -1,5 +1,6 @@
-import { RefObject, useCallback } from "react";
-import type { Attributes, Config } from "../types";
+import { type RefObject, useCallback } from "react";
+import type { Attributes, Config, Func, Trackers } from "../types";
+import { Executor } from "../utils";
 
 export const useUtils = <T extends HTMLElement>() => {
   const addCustomEventListeners = useCallback(
@@ -30,35 +31,55 @@ export const useUtils = <T extends HTMLElement>() => {
     []
   );
 
-  const activatePresets = (presetConfigs?: Config["presets"]) => {
-    if (!presetConfigs || presetConfigs.length === 0) {
+  const usePresets = (
+    presetConfigs: Config["presets"] = [],
+    attributes: Required<Attributes>
+  ) => {
+    if (presetConfigs.length === 0) {
       return {};
     }
-    for (const presetConfig of presetConfigs) {
-      console.log(presetConfig);
+
+    const executor = new Executor();
+    const trackers: Trackers = {};
+
+    for (const { title, ref, resonate } of presetConfigs) {
+      trackers[`${title}`] = ref;
+      executor.addFunction(() => resonate(attributes));
     }
 
+    let deactivatePresets: Func | undefined;
+    const activatePresets = () => {
+      const cleanups = executor.executeAll();
+
+      deactivatePresets = () => {
+        for (const cleanup of cleanups) {
+          cleanup();
+        }
+      };
+    };
+
     return {
-      trackers: {},
-      deactivate: () => {},
+      trackers,
+      activatePresets,
+      deactivatePresets,
     };
   };
 
   return {
+    usePresets,
     addCustomEventListeners,
     removeCustomEventListeners,
-    activatePresets,
   };
 };
 
 export const useAttributes = <T extends HTMLElement>(
   tracker: RefObject<T>
-): Required<Attributes> => {
+): Attributes => {
   const getPosition: Attributes["getPosition"] = () => {
     return tracker.current!.getBoundingClientRect();
   };
 
-  const getCenter: Attributes["getCenter"] = ({
+  const getDistanceFromCenter: Attributes["getDistanceFromCenter"] = ({
     mousePosition,
     elementPosition,
   }) => {
@@ -72,6 +93,6 @@ export const useAttributes = <T extends HTMLElement>(
 
   return {
     getPosition,
-    getCenter,
+    getDistanceFromCenter,
   };
 };

@@ -9,48 +9,46 @@ export const useResonate = <T extends HTMLElement = HTMLDivElement>(
   configs?: Partial<Config>
 ): Record<string, RefObject<T>> => {
   const containerRef = useRef<T>(null);
-  const { getPosition, getCenter } = useAttributes<T>(containerRef);
-  const {
-    addCustomEventListeners,
-    removeCustomEventListeners,
-    activatePresets,
-  } = useUtils<T>();
+  const { getPosition, getDistanceFromCenter } = useAttributes<T>(containerRef);
+  const { usePresets, addCustomEventListeners, removeCustomEventListeners } =
+    useUtils<T>();
 
   const attributes: Attributes = {
     getPosition,
-    getCenter,
+    getDistanceFromCenter,
   };
 
-  let trackers = { containerRef };
+  const { trackers, activatePresets, deactivatePresets } = usePresets(
+    configs?.presets,
+    attributes
+  );
 
   useEffect(() => {
-    const wrapper = extractElementFromRef(containerRef);
+    const container = extractElementFromRef(containerRef);
 
     addCustomEventListeners(
       configs?.customEventListeners
         ? configs.customEventListeners(attributes)
         : undefined,
-      wrapper
+      container
     );
 
-    const { trackers: componentTrackers, deactivate: deactivatePresets } =
-      activatePresets(configs?.presets);
-    trackers = {
-      ...trackers,
-      ...componentTrackers,
-    };
+    if (activatePresets) activatePresets();
 
     return () => {
       removeCustomEventListeners(
         configs?.customEventListeners
           ? configs.customEventListeners(attributes)
           : undefined,
-        wrapper
+        container
       );
 
       if (deactivatePresets) deactivatePresets();
     };
   }, [containerRef]);
 
-  return trackers;
+  return {
+    ...trackers,
+    container: containerRef,
+  };
 };
