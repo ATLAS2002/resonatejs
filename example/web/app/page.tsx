@@ -1,19 +1,30 @@
 "use client";
-import { useResonate, ResonateWrapper } from "@resonatejs/react";
+import { useResonate, ResonateWrapper, glowEffect } from "@resonatejs/react";
 
 export default function Page(): JSX.Element {
-  const resonateRef = useResonate();
+  const tracker = useResonate({
+    presets: [glowEffect()],
+  });
 
   return (
-    <main>
+    <main className="h-screen w-full bg-slate-200">
       <ResonateWrapper
-        resonateRef={resonateRef}
+        tracker={tracker}
         style={{
-          width: "fit-content",
-          height: "fit-content",
+          width: "100%",
+          height: "50%",
+          backgroundColor: "orange",
+          position: "relative",
         }}
       >
-        <div style={{}}></div>
+        <div
+          className="bg-lime-600 text-lime-200 h-fit w-full text-6xl"
+          onClick={() => {
+            console.log("clicked");
+          }}
+        >
+          HELLO
+        </div>
       </ResonateWrapper>
     </main>
   );
