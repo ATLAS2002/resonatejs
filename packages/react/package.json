@@ -17,6 +17,7 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/react": "^18.2.47",
+    "@types/react-dom": "^18.2.18",
     "eslint": "^8.53.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
@@ -26,6 +27,7 @@
   },
   "peerDependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "typescript": "^5.2.2"
   }
 }

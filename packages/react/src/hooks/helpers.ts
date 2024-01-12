@@ -1,61 +1,76 @@
-import { type RefObject, useCallback } from "react";
-import type { Attributes, Config, Func, Trackers } from "../types";
-import { Executor } from "../utils";
+import { OperationManager } from "../utils";
+import type {
+  Preset,
+  Callback,
+  Trackers,
+  Listener,
+  EventKeys,
+  APIMethods,
+  FuncWithParams,
+  CustomEventListener,
+} from "../types";
 
-export const useUtils = <T extends HTMLElement>() => {
-  const addCustomEventListeners = useCallback(
-    (
-      eventListeners: ReturnType<Config["customEventListeners"]> | undefined,
-      target: T
-    ) => {
+export const useConfig = <T extends HTMLElement>() => {
+  /**
+   * @param eventListeners collection of user defined event listeners
+   * @returns methods to add and remove listeners
+   */
+  const applyCustomEventListeners = (
+    eventListeners: CustomEventListener<T> | undefined
+  ) => {
+    const eventManager = new OperationManager();
+
+    /**
+     * @description adds all listeners
+     * @param target the html element that all these listeners are being applied on
+     */
+    const addCustomEventListeners: FuncWithParams<void, [T]> = (target) => {
       if (!eventListeners) return;
-      for (const [event, listener] of Object.entries(eventListeners)) {
+      for (const eventListener of Object.entries(eventListeners)) {
+        const [event, listener] = eventListener as [
+          EventKeys,
+          Listener<EventKeys>,
+        ];
+
         console.log(`Event: "${event}" is mounted`);
         target.addEventListener(event, listener);
-      }
-    },
-    []
-  );
 
-  const removeCustomEventListeners = useCallback(
-    (
-      eventListeners: ReturnType<Config["customEventListeners"]> | undefined,
-      target: T
-    ) => {
-      if (!eventListeners) return;
-      for (const [event, listener] of Object.entries(eventListeners)) {
-        console.log(`Event: "${event}" is unmounted`);
-        target.removeEventListener(event, listener);
+        eventManager.addFunction(() => {
+          console.log(`Event: "${event}" is unmounted`);
+          target.removeEventListener(event, listener);
+        });
       }
-    },
-    []
-  );
+    };
+    /**
+     * @description removes all listeners
+     */
+    const removeCustomEventListeners: Callback = () => {
+      eventManager.executeAll();
+    };
 
-  const usePresets = (
-    presetConfigs: Config["presets"] = [],
-    attributes: Required<Attributes>
+    return { addCustomEventListeners, removeCustomEventListeners };
+  };
+
+  const applyPresets = (
+    presetConfigs: Preset<T>[] = [],
+    api: Required<APIMethods<T>>
   ) => {
-    if (presetConfigs.length === 0) {
-      return {};
-    }
+    const trackers: Partial<Trackers> = {};
 
-    const executor = new Executor();
-    const trackers: Trackers = {};
+    const presetManager = new OperationManager();
 
     for (const { title, ref, resonate } of presetConfigs) {
       trackers[`${title}`] = ref;
-      executor.addFunction(() => resonate(attributes));
+      presetManager.addFunction(() => resonate(api));
     }
 
-    let deactivatePresets: Func | undefined;
-    const activatePresets = () => {
-      const cleanups = executor.executeAll();
+    const activatePresets: Callback = () => {
+      const cleanup: Function[] = presetManager.executeAll(true);
+      presetManager.addFunction(cleanup);
+    };
 
-      deactivatePresets = () => {
-        for (const cleanup of cleanups) {
-          cleanup();
-        }
-      };
+    const deactivatePresets: Callback = () => {
+      presetManager.executeAll();
     };
 
     return {
@@ -66,33 +81,7 @@ export const useUtils = <T extends HTMLElement>() => {
   };
 
   return {
-    usePresets,
-    addCustomEventListeners,
-    removeCustomEventListeners,
-  };
-};
-
-export const useAttributes = <T extends HTMLElement>(
-  tracker: RefObject<T>
-): Attributes => {
-  const getPosition: Attributes["getPosition"] = () => {
-    return tracker.current!.getBoundingClientRect();
-  };
-
-  const getDistanceFromCenter: Attributes["getDistanceFromCenter"] = ({
-    mousePosition,
-    elementPosition,
-  }) => {
-    const left = mousePosition.x - elementPosition.x;
-    const top = mousePosition.y - elementPosition.y;
-    return {
-      x: left - elementPosition.width / 2,
-      y: top - elementPosition.height / 2,
-    };
-  };
-
-  return {
-    getPosition,
-    getDistanceFromCenter,
+    applyPresets,
+    applyCustomEventListeners,
   };
 };

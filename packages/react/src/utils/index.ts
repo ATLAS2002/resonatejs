@@ -1,12 +1,20 @@
 import { RefObject } from "react";
+import { RefTitle } from "../types";
 
 export const extractElementFromRef = <T extends HTMLElement>(
-  ref: RefObject<T>
+  ref: RefObject<T>,
+  title: RefTitle
 ): T | never => {
   const elm = ref.current;
-  if (!elm) throw new Error("Inject the ref object to the proper component");
+  if (!elm) {
+    const errorMessage = `Inject the ref object${
+      title ? ": " + title + "," : ""
+    } to the proper component`;
+
+    throw new Error(errorMessage);
+  }
 
   return elm;
 };
 
-export * from "./executor";
+export * from "./operation-manager";

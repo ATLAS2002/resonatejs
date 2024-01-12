@@ -1,47 +1,36 @@
 "use client";
 
-import { RefObject, useEffect, useRef } from "react";
-import { useAttributes, useUtils } from "./helpers";
-import { Attributes, Config } from "../types";
+import { useEffect, useRef } from "react";
+
+import { useAPI } from "./api";
+import { useConfig } from "./helpers";
 import { extractElementFromRef } from "../utils";
+import type { Config, Trackers } from "../types";
 
 export const useResonate = <T extends HTMLElement = HTMLDivElement>(
-  configs?: Partial<Config>
-): Record<string, RefObject<T>> => {
+  configs?: Partial<Config<T>>
+): Partial<Trackers> => {
   const containerRef = useRef<T>(null);
-  const { getPosition, getDistanceFromCenter } = useAttributes<T>(containerRef);
-  const { usePresets, addCustomEventListeners, removeCustomEventListeners } =
-    useUtils<T>();
+  const api = useAPI<T>(containerRef);
+  const { applyPresets, applyCustomEventListeners } = useConfig<T>();
 
-  const attributes: Attributes = {
-    getPosition,
-    getDistanceFromCenter,
-  };
+  const { addCustomEventListeners, removeCustomEventListeners } =
+    applyCustomEventListeners(configs?.customEventListeners);
 
-  const { trackers, activatePresets, deactivatePresets } = usePresets(
+  const { trackers, activatePresets, deactivatePresets } = applyPresets(
     configs?.presets,
-    attributes
+    api
   );
 
   useEffect(() => {
-    const container = extractElementFromRef(containerRef);
+    const container = extractElementFromRef(containerRef, "container");
 
-    addCustomEventListeners(
-      configs?.customEventListeners
-        ? configs.customEventListeners(attributes)
-        : undefined,
-      container
-    );
+    addCustomEventListeners(container);
 
     if (activatePresets) activatePresets();
 
     return () => {
-      removeCustomEventListeners(
-        configs?.customEventListeners
-          ? configs.customEventListeners(attributes)
-          : undefined,
-        container
-      );
+      removeCustomEventListeners();
 
       if (deactivatePresets) deactivatePresets();
     };
