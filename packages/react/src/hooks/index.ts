@@ -1,21 +1,23 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 import { useAPI } from "./api";
 import { useConfig } from "./helpers";
-import { extractElementFromRef } from "../utils";
+import { generateRef } from "../utils";
 import type { Config, Trackers } from "../types";
 
 export const useResonate = <T extends HTMLElement = HTMLDivElement>(
   configs?: Partial<Config<T>>
 ): Partial<Trackers> => {
-  const containerRef = useRef<T>(null);
+  const { refObj: containerRef, extractElementFromRef } =
+    generateRef<T>("container");
+
   const api = useAPI<T>(containerRef);
   const { applyPresets, applyCustomEventListeners } = useConfig<T>();
 
   const { addCustomEventListeners, removeCustomEventListeners } =
-    applyCustomEventListeners(configs?.customEventListeners);
+    applyCustomEventListeners(configs?.customEventListeners, api);
 
   const { trackers, activatePresets, deactivatePresets } = applyPresets(
     configs?.presets,
@@ -23,18 +25,18 @@ export const useResonate = <T extends HTMLElement = HTMLDivElement>(
   );
 
   useEffect(() => {
-    const container = extractElementFromRef(containerRef, "container");
+    const container = extractElementFromRef();
+
+    activatePresets();
 
     addCustomEventListeners(container);
 
-    if (activatePresets) activatePresets();
-
     return () => {
-      removeCustomEventListeners();
+      deactivatePresets();
 
-      if (deactivatePresets) deactivatePresets();
+      removeCustomEventListeners();
     };
-  }, [containerRef]);
+  }, []);
 
   return {
     ...trackers,

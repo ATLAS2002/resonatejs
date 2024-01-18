@@ -1,7 +1,9 @@
+import { FuncWithParams } from "../types";
+
 interface OperationMethods {
-  operations: unknown;
-  addFunction: unknown;
-  executeAll: unknown;
+  operations: Function[];
+  addFunction: FuncWithParams<void, [Function | Function[]]>;
+  executeAll: FuncWithParams<any[], [boolean]>;
 }
 
 export class OperationManager implements OperationMethods {
@@ -13,9 +15,9 @@ export class OperationManager implements OperationMethods {
 
   public addFunction(input: Function | Function[]) {
     if (Array.isArray(input)) {
-      this._operations = [...this.operations, ...input];
+      this._operations = [...this._operations, ...input];
     } else {
-      this.operations.push(input);
+      this._operations.push(input);
     }
   }
 

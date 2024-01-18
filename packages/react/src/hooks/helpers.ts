@@ -16,7 +16,8 @@ export const useConfig = <T extends HTMLElement>() => {
    * @returns methods to add and remove listeners
    */
   const applyCustomEventListeners = (
-    eventListeners: CustomEventListener<T> | undefined
+    eventListeners: CustomEventListener<T> | undefined,
+    api: Required<APIMethods<T>>
   ) => {
     const eventManager = new OperationManager();
 
@@ -26,7 +27,7 @@ export const useConfig = <T extends HTMLElement>() => {
      */
     const addCustomEventListeners: FuncWithParams<void, [T]> = (target) => {
       if (!eventListeners) return;
-      for (const eventListener of Object.entries(eventListeners)) {
+      for (const eventListener of Object.entries(eventListeners(api))) {
         const [event, listener] = eventListener as [
           EventKeys,
           Listener<EventKeys>,
@@ -52,15 +53,15 @@ export const useConfig = <T extends HTMLElement>() => {
   };
 
   const applyPresets = (
-    presetConfigs: Preset<T>[] = [],
+    presets: Preset<T>[] = [],
     api: Required<APIMethods<T>>
   ) => {
     const trackers: Partial<Trackers> = {};
 
     const presetManager = new OperationManager();
 
-    for (const { title, ref, resonate } of presetConfigs) {
-      trackers[`${title}`] = ref;
+    for (const { title, ref, resonate } of presets) {
+      if (title && ref) trackers[`${title}`] = ref;
       presetManager.addFunction(() => resonate(api));
     }
 

@@ -27,13 +27,18 @@ export type FuncWithParams<ReturnType, ParamsType extends any[]> = (
   ...args: ParamsType
 ) => ReturnType;
 
-export type RefTitle = string & ("container" | "glow");
+export type RefTitle = string & ("container" | "glare");
 export type Trackers = Prettify<Record<RefTitle, RefObject<any>>>;
 
 /**
  * @description All API functions that are available with the hook
  */
 export type APIMethods<T extends HTMLElement> = Prettify<{
+  getAngle: FuncWithParams<number, [PositionMetrics]>;
+  getProgress: FuncWithParams<
+    number,
+    [PositionMetrics, PositionMetrics, PositionMetrics]
+  >;
   getContainer: Func<T>;
   getCenterPosition: Func<PositionMetrics>;
   getContainerPosition: Func<DOMRect>;
@@ -41,11 +46,11 @@ export type APIMethods<T extends HTMLElement> = Prettify<{
   getMinDistanceFromBoundary: FuncWithParams<number, [PositionMetrics]>;
 }>;
 
-export interface Preset<T extends HTMLElement> {
-  title: RefTitle;
-  ref: RefObject<T>;
+export type Preset<T extends HTMLElement> = {
+  title?: RefTitle;
+  ref?: RefObject<T>;
   resonate: (api: Required<APIMethods<T>>) => Callback;
-}
+};
 
 export type EventKeys = keyof GlobalEventHandlersEventMap;
 export type EventType<E extends EventKeys> = GlobalEventHandlersEventMap[E];
@@ -54,6 +59,10 @@ export type Listener<E extends EventKeys> = FuncWithParams<
   [EventType<E>]
 >;
 
+/**
+ * @param api methods provided by the hook
+ * @description return a object containing pair of event name and event listener
+ */
 export type CustomEventListener<ContainerType extends HTMLElement> = (
   api: APIMethods<ContainerType>
 ) => Partial<{ [Event in EventKeys]: Listener<Event> }>;

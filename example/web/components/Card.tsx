@@ -1,26 +1,19 @@
-import { ResonateContainer, glowEffect, useResonate } from "@resonatejs/react";
+import { ResonateContainer, useResonate, glare } from "@resonatejs/react";
+import { ReactNode } from "react";
 
-const Card: any = ({ children }: { children: any }) => {
+const Card = ({ children }: { children: ReactNode }) => {
   const trackers = useResonate({
-    presets: [
-      glowEffect({
-        stay: true,
-        dispersion: "80%",
-      }),
-      // hoverEffect({}),
-    ],
-    customEventListeners: ({ getDistanceFromCenter }) => ({
-      mouseenter: ({ x, y }) => {
-        console.log(getDistanceFromCenter({ x, y }));
-      },
-    }),
+    presets: [glare({ highlight: "#ffffff33" })],
+    // customEventListeners: () => ({
+    //   mousemove: (e) => console.log(e.x, e.y),
+    // }),
   });
 
   return (
-    <div className="w-1/2 max-w-xl min-w-80 m-4 aspect-video rounded-3xl hover:scale-105 bg-slate-300 overflow-hidden transition duration-500">
+    <div className="w-1/2 max-w-xl min-w-80 m-4 aspect-video rounded-3xl hover:scale-1050 transition duration-500">
       <ResonateContainer
         trackers={trackers}
-        className="rounded-3xl border-t-2 border-slate-100"
+        className="rounded-3xl transform-gpu overflow-hidden border-slate-100 bg-slate-900"
       >
         {children}
       </ResonateContainer>
