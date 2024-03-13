@@ -11,12 +11,24 @@ importers:
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:base/eslint-config
+      '@repo/tailwind-config':
+        specifier: workspace:*
+        version: link:base/tailwind-config
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:base/typescript-config
+      autoprefixer:
+        specifier: ^10.4.16
+        version: 10.4.16(postcss@8.4.33)
+      postcss:
+        specifier: ^8.4.33
+        version: 8.4.33
       prettier:
         specifier: ^3.1.0
         version: 3.1.0
+      tailwindcss:
+        specifier: ^3.4.1
+        version: 3.4.1
       turbo:
         specifier: latest
         version: 1.11.2
@@ -44,6 +56,18 @@ importers:
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
+
+  base/tailwind-config:
+    devDependencies:
+      autoprefixer:
+        specifier: ^10.4.16
+        version: 10.4.16(postcss@8.4.33)
+      postcss:
+        specifier: ^8.4.33
+        version: 8.4.33
+      tailwindcss:
+        specifier: ^3.4.1
+        version: 3.4.1
 
   base/typescript-config: {}
 
@@ -125,12 +149,12 @@ importers:
 
   example/web:
     dependencies:
+      '@repo/tailwind-config':
+        specifier: workspace:*
+        version: link:../../base/tailwind-config
       '@repo/ui':
         specifier: workspace:*
         version: link:../../base/ui
-      '@resonatejs/presets':
-        specifier: workspace:*
-        version: link:../../packages/presets
       '@resonatejs/react':
         specifier: workspace:*
         version: link:../../packages/react
@@ -177,21 +201,6 @@ importers:
       tailwindcss:
         specifier: ^3.4.1
         version: 3.4.1
-      typescript:
-        specifier: ^5.2.2
-        version: 5.2.2
-
-  packages/presets:
-    devDependencies:
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../../base/eslint-config
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../../base/typescript-config
-      eslint:
-        specifier: ^8.53.0
-        version: 8.54.0
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
