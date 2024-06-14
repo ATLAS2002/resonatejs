@@ -1,14 +1,10 @@
-import { RefObject } from "react";
+import type { RefObject } from "react";
 
-/* eslint-disable no-unused-vars */
 export type Prettify<T> = {
   [K in keyof T]: T[K];
 } & {};
 
-export type PositionMetrics<T extends string = never> = Record<
-  T | "x" | "y",
-  number
->;
+export type Vector = Record<"x" | "y", number>;
 
 /**
  * @description Use it for cleanup purposes, For a regular function use Func or FuncWithParams
@@ -34,16 +30,13 @@ export type Trackers = Prettify<Record<RefTitle, RefObject<any>>>;
  * @description All API functions that are available with the hook
  */
 export type APIMethods<T extends HTMLElement> = Prettify<{
-  getAngle: FuncWithParams<number, [PositionMetrics]>;
-  getProgress: FuncWithParams<
-    number,
-    [PositionMetrics, PositionMetrics, PositionMetrics]
-  >;
+  getAngle: FuncWithParams<number, [Vector]>;
+  getProgress: FuncWithParams<number, [Vector, Vector, Vector]>;
   getContainer: Func<T>;
-  getCenterPosition: Func<PositionMetrics>;
+  getCenterPosition: Func<Vector>;
   getContainerPosition: Func<DOMRect>;
-  getDistanceFromCenter: FuncWithParams<PositionMetrics, [PositionMetrics]>;
-  getMinDistanceFromBoundary: FuncWithParams<number, [PositionMetrics]>;
+  getDistanceFromCenter: FuncWithParams<Vector, [Vector]>;
+  getMinDistanceFromBoundary: FuncWithParams<number, [Vector]>;
 }>;
 
 export type Preset<T extends HTMLElement> = {
@@ -51,6 +44,9 @@ export type Preset<T extends HTMLElement> = {
   ref?: RefObject<T>;
   resonate: (api: Required<APIMethods<T>>) => Callback;
 };
+export type ResonateFN<T extends HTMLElement = HTMLDivElement> = (
+  api: APIMethods<T>,
+) => Callback;
 
 export type EventKeys = keyof GlobalEventHandlersEventMap;
 export type EventType<E extends EventKeys> = GlobalEventHandlersEventMap[E];
@@ -64,7 +60,7 @@ export type Listener<E extends EventKeys> = FuncWithParams<
  * @description return a object containing pair of event name and event listener
  */
 export type CustomEventListener<ContainerType extends HTMLElement> = (
-  api: APIMethods<ContainerType>
+  api: APIMethods<ContainerType>,
 ) => Partial<{ [Event in EventKeys]: Listener<Event> }>;
 
 /**

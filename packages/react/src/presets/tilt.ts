@@ -1,4 +1,4 @@
-import type { APIMethods, Preset, Prettify } from "../types";
+import type { APIMethods, Preset, Prettify, ResonateFN } from "../types";
 
 interface FloatConfig {
   shadowColor: string;
@@ -13,7 +13,7 @@ const baseConfig = {
 } as const;
 
 export default function (
-  configs?: Prettify<Partial<FloatConfig>>
+  configs?: Prettify<Partial<FloatConfig>>,
 ): Preset<HTMLDivElement> {
   const { shadowColor, shadowOffsetX, shadowOffsetY } = {
     ...baseConfig,
@@ -22,10 +22,7 @@ export default function (
     ...configs,
   };
 
-  const resonate = ({
-    getContainer,
-    getDistanceFromCenter,
-  }: APIMethods<HTMLDivElement>) => {
+  const resonate: ResonateFN = ({ getContainer, getDistanceFromCenter }) => {
     const container = getContainer();
 
     const handleMouseMove = ({ x, y }: MouseEvent) => {

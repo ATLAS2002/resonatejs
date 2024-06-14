@@ -1,4 +1,4 @@
-import { OperationManager } from "../utils";
+import { EventManager } from "../lib/event-manager";
 import type {
   Preset,
   Callback,
@@ -10,6 +10,8 @@ import type {
   CustomEventListener,
 } from "../types";
 
+type EventListener = [EventKeys, Listener<EventKeys>];
+
 export const useConfig = <T extends HTMLElement>() => {
   /**
    * @param eventListeners collection of user defined event listeners
@@ -17,9 +19,9 @@ export const useConfig = <T extends HTMLElement>() => {
    */
   const applyCustomEventListeners = (
     eventListeners: CustomEventListener<T> | undefined,
-    api: Required<APIMethods<T>>
+    api: Required<APIMethods<T>>,
   ) => {
-    const eventManager = new OperationManager();
+    const eventManager = new EventManager();
 
     /**
      * @description adds all listeners
@@ -28,16 +30,13 @@ export const useConfig = <T extends HTMLElement>() => {
     const addCustomEventListeners: FuncWithParams<void, [T]> = (target) => {
       if (!eventListeners) return;
       for (const eventListener of Object.entries(eventListeners(api))) {
-        const [event, listener] = eventListener as [
-          EventKeys,
-          Listener<EventKeys>,
-        ];
+        const [event, listener] = eventListener as EventListener;
 
-        console.log(`Event: "${event}" is mounted`);
+        // console.log(`Event: "${event}" is mounted`);
         target.addEventListener(event, listener);
 
         eventManager.addFunction(() => {
-          console.log(`Event: "${event}" is unmounted`);
+          // console.log(`Event: "${event}" is unmounted`);
           target.removeEventListener(event, listener);
         });
       }
@@ -54,14 +53,14 @@ export const useConfig = <T extends HTMLElement>() => {
 
   const applyPresets = (
     presets: Preset<T>[] = [],
-    api: Required<APIMethods<T>>
+    api: Required<APIMethods<T>>,
   ) => {
     const trackers: Partial<Trackers> = {};
 
-    const presetManager = new OperationManager();
+    const presetManager = new EventManager();
 
     for (const { title, ref, resonate } of presets) {
-      if (title && ref) trackers[`${title}`] = ref;
+      if (title && ref) trackers[title] = ref;
       presetManager.addFunction(() => resonate(api));
     }
 

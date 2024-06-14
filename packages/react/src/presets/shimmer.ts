@@ -1,5 +1,5 @@
-import { generateRef } from "../utils";
-import { APIMethods, Preset, Prettify } from "../types";
+import { generateRef } from "../lib/utils";
+import type { APIMethods, Preset, Prettify, ResonateFN } from "../types";
 
 interface ShimmerConfig {
   highlight: string;
@@ -27,7 +27,7 @@ const baseConfig = {
 } as const;
 
 export default function (
-  configs?: Prettify<Partial<ShimmerConfig>>
+  configs?: Prettify<Partial<ShimmerConfig>>,
 ): Preset<HTMLDivElement> {
   const { highlight, shadow, angle, width, speed, offset, fade, stay } = {
     ...baseConfig,
@@ -39,11 +39,11 @@ export default function (
 
   let position: { x: number; y: number; angle: number };
 
-  const resonate = ({
+  const resonate: ResonateFN = ({
     getAngle,
     getProgress,
     getCenterPosition,
-  }: APIMethods<HTMLDivElement>) => {
+  }) => {
     const glare = extractElementFromRef();
 
     const handleMouseMove = ({ x, y }: MouseEvent) => {
@@ -53,7 +53,7 @@ export default function (
           y,
         }) *
           100 *
-          speed
+          speed,
       );
 
       if (fade !== 0) glare.style.opacity = `${1 - progress / (100 * fade)}`;

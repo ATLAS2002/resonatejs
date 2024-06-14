@@ -4,11 +4,11 @@ import { useEffect } from "react";
 
 import { useAPI } from "./api";
 import { useConfig } from "./helpers";
-import { generateRef } from "../utils";
+import { generateRef } from "../lib/utils";
 import type { Config, Trackers } from "../types";
 
 export const useResonate = <T extends HTMLElement = HTMLDivElement>(
-  configs?: Partial<Config<T>>
+  configs?: Partial<Config<T>>,
 ): Partial<Trackers> => {
   const { refObj: containerRef, extractElementFromRef } =
     generateRef<T>("container");
@@ -21,7 +21,7 @@ export const useResonate = <T extends HTMLElement = HTMLDivElement>(
 
   const { trackers, activatePresets, deactivatePresets } = applyPresets(
     configs?.presets,
-    api
+    api,
   );
 
   useEffect(() => {

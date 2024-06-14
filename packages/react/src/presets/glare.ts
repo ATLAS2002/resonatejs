@@ -1,5 +1,5 @@
-import { generateRef } from "../utils";
-import { APIMethods, Preset, Prettify } from "../types";
+import { generateRef } from "../lib/utils";
+import type { APIMethods, Preset, Prettify, ResonateFN } from "../types";
 
 interface GlareConfig {
   highlight: string;
@@ -31,7 +31,7 @@ const baseConfig = {
 } as const;
 
 export default function (
-  configs?: Prettify<Partial<GlareConfig>>
+  configs?: Prettify<Partial<GlareConfig>>,
 ): Preset<HTMLDivElement> {
   const {
     highlight,
@@ -55,10 +55,10 @@ export default function (
   const { refObj: glareRef, extractElementFromRef } =
     generateRef<HTMLDivElement>("glare");
 
-  const resonate = ({
+  const resonate: ResonateFN = ({
     getContainerPosition,
     getDistanceFromCenter,
-  }: APIMethods<HTMLDivElement>) => {
+  }) => {
     const elmPos = getContainerPosition();
     const glare = extractElementFromRef();
 

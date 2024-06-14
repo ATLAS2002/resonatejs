@@ -1,9 +1,9 @@
-import { RefObject } from "react";
-import { calculateAngle } from "../utils";
-import type { APIMethods, PositionMetrics } from "../types";
+import type { RefObject } from "react";
+import { calculateAngle } from "../lib/utils";
+import type { APIMethods, Vector } from "../types";
 
 export const useAPI = <T extends HTMLElement>(
-  container: RefObject<T>
+  container: RefObject<T>,
 ): APIMethods<T> => {
   /**
    * @returns current container element
@@ -24,7 +24,7 @@ export const useAPI = <T extends HTMLElement>(
   };
 
   const getDistanceFromCenter: APIMethods<T>["getDistanceFromCenter"] = (
-    pointer
+    pointer,
   ) => {
     const elm = getContainerPosition();
     const left = pointer.x - elm.x;
@@ -53,16 +53,16 @@ export const useAPI = <T extends HTMLElement>(
             x: x + width / 2,
             y: center.x < entryPoint.x ? y : y + height,
           },
-          { ...center }
-        )
+          { ...center },
+        ),
       ) + (center.x < entryPoint.x ? 180 : 0);
     return angle;
   };
 
   const getProgress: APIMethods<T>["getProgress"] = (
-    start: PositionMetrics,
-    center: PositionMetrics,
-    curr: PositionMetrics
+    start: Vector,
+    center: Vector,
+    curr: Vector,
   ) => {
     const end = {
       x: 2 * center.x - start.x,
@@ -76,30 +76,21 @@ export const useAPI = <T extends HTMLElement>(
     const progressX = (curr.y - yIntercept) / perpendicularSlope;
     const progressY = perpendicularSlope * progressX + yIntercept;
     const progress = { x: progressX, y: progressY };
-    // console.log(progress.x - start.x, progress.y - start.y);
 
     const totalDistance = calculateDistance(start, end);
     const coveredDistance = calculateDistance(start, progress);
 
     if (isFading(progress, start, end)) {
-      console.log("working");
       return -coveredDistance / totalDistance;
     }
     return coveredDistance / totalDistance;
   };
 
-  const calculateDistance = (
-    a: PositionMetrics,
-    b: PositionMetrics
-  ): number => {
+  const calculateDistance = (a: Vector, b: Vector): number => {
     return Math.sqrt((b.x - a.x) ** 2 + (b.y - a.y) ** 2);
   };
 
-  const isFading = (
-    a: PositionMetrics,
-    b: PositionMetrics,
-    c: PositionMetrics
-  ): boolean => {
+  const isFading = (a: Vector, b: Vector, c: Vector): boolean => {
     if (b.x <= c.x && b.y <= c.y) return a.x <= b.x && a.y <= b.y;
     if (b.x > c.x && b.y < c.y) return a.x >= b.x && a.y < b.y;
     if (b.x <= c.x && b.y > c.y) return a.x <= b.x && a.y > b.y;
