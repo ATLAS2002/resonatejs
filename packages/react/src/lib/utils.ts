@@ -46,3 +46,9 @@ export const calculateAngle = (
   const cosine = dotProduct / (baseMagnitude * incomingMagnitude);
   return (Math.acos(cosine) * 180) / Math.PI;
 };
+
+export const getRelativePosition = (l: number, u: number, x: number) => {
+  if (x >= l && x <= u) return 0;
+  else if (x < l) return x - l;
+  else return x - u;
+};
