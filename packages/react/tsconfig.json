@@ -1,0 +1,10 @@
+{
+  "extends": "@config/typescript/react-library.json",
+  "compilerOptions": {
+    "jsx": "react",
+    "outDir": "dist",
+    "esModuleInterop": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}
