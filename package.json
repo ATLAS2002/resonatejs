@@ -1,0 +1,23 @@
+{
+  "name": "resonatejs",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,js,cjs,mjs,json}\"",
+    "format:check": "prettier --check \"**/*.{ts,js,cjs,mjs,json}\"",
+    "format:staged": "prettier --write"
+  },
+  "devDependencies": {
+    "@config/eslint": "workspace:*",
+    "@config/typescript": "workspace:*",
+    "prettier": "^3.2.5",
+    "turbo": "latest",
+    "typescript": "^5.4.5"
+  },
+  "packageManager": "pnpm@8.9.0",
+  "engines": {
+    "node": ">=18"
+  }
+}
