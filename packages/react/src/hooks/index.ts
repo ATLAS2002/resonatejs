@@ -43,3 +43,6 @@ export const useResonate = <T extends HTMLElement = HTMLDivElement>(
     container: containerRef,
   };
 };
+
+export * from "./api";
+export * from "./context";

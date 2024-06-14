@@ -13,14 +13,6 @@ export const Card = ({
 }) => {
   const trackers = useResonate({
     presets: [glare(), tilt()],
-    customEventListeners: ({ getCenterPosition }) => ({
-      mouseenter: () => {
-        console.log(getCenterPosition());
-      },
-      load: () => {
-        console.log("loaded");
-      },
-    }),
   });
 
   return (

@@ -36,6 +36,8 @@ export type APIMethods<T extends HTMLElement> = Prettify<{
   getCenterPosition: Func<Vector>;
   getContainerPosition: Func<DOMRect>;
   getDistanceFromCenter: FuncWithParams<Vector, [Vector]>;
+  getRelativePositionFromCenter: FuncWithParams<Vector, [Vector]>;
+  getRelativePositionFromBoundary: FuncWithParams<Vector, [Vector]>;
   getMinDistanceFromBoundary: FuncWithParams<number, [Vector]>;
 }>;
 

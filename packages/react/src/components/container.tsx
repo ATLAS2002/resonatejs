@@ -1,21 +1,14 @@
-import React, { forwardRef } from "react";
-import type {
-  CSSProperties,
-  DetailedHTMLProps,
-  FC,
-  HTMLAttributes,
-  ReactNode,
-} from "react";
+import React from "react";
 import type { Trackers } from "../types";
 
-type JSXAttributes<T> = DetailedHTMLProps<HTMLAttributes<T>, T>;
+type JSXAttributes<T> = React.DetailedHTMLProps<React.HTMLAttributes<T>, T>;
 
 interface Props<T> extends JSXAttributes<T> {
-  children: ReactNode;
+  children: React.ReactNode;
   trackers: Partial<Trackers>;
 }
 
-const baseStyle: Partial<CSSProperties> = {
+const baseStyle: Partial<React.CSSProperties> = {
   width: "100%",
   height: "100%",
   position: "relative",
@@ -27,7 +20,7 @@ const baseStyle: Partial<CSSProperties> = {
  * @param children
  * @param trackers - pass the object obtained from useResonate hook
  */
-export const ResonateContainer: FC<Props<HTMLDivElement>> = ({
+export const ResonateContainer: React.FC<Props<HTMLDivElement>> = ({
   children,
   trackers,
   ...props
@@ -54,7 +47,7 @@ export const ResonateContainer: FC<Props<HTMLDivElement>> = ({
   );
 };
 
-export const Glare = forwardRef<HTMLDivElement>((_, ref) => (
+export const Glare = React.forwardRef<HTMLDivElement>((_, ref) => (
   <div
     ref={ref}
     style={{
