@@ -1,5 +1,5 @@
 import type { RefObject } from "react";
-import { calculateAngle } from "../lib/utils";
+import { calculateAngle, getRelativePosition } from "../lib/utils";
 import type { APIMethods, Vector } from "../types";
 
 export const useAPI = <T extends HTMLElement>(
@@ -35,11 +35,30 @@ export const useAPI = <T extends HTMLElement>(
     };
   };
 
+  const getRelativePositionFromCenter: APIMethods<T>["getRelativePositionFromCenter"] =
+    (pointer: Vector) => {
+      const { x, y } = getCenterPosition();
+      return {
+        x: pointer.x - x,
+        y: pointer.y - y,
+      };
+    };
+
+  const getRelativePositionFromBoundary: APIMethods<T>["getRelativePositionFromBoundary"] =
+    (pointer) => {
+      const { left, top, right, bottom } = getContainerPosition();
+
+      return {
+        x: getRelativePosition(left, right, pointer.x),
+        y: getRelativePosition(top, bottom, pointer.y),
+      };
+    };
+
   const getMinDistanceFromBoundary: APIMethods<T>["getMinDistanceFromBoundary"] =
     ({ x, y }) => {
-      const { x: left, y: top, width, height } = getContainerPosition();
+      const { left, top, right, bottom } = getContainerPosition();
 
-      return Math.min(x - left, y - top, left + width - x, top + height - y);
+      return Math.min(x - left, y - top, right - x, bottom - y);
     };
 
   const getAngle: APIMethods<T>["getAngle"] = (entryPoint) => {
@@ -105,5 +124,7 @@ export const useAPI = <T extends HTMLElement>(
     getContainerPosition,
     getDistanceFromCenter,
     getMinDistanceFromBoundary,
+    getRelativePositionFromCenter,
+    getRelativePositionFromBoundary,
   };
 };
