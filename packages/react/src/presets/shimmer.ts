@@ -1,5 +1,5 @@
 import { generateRef } from "../lib/utils";
-import type { APIMethods, Preset, Prettify, ResonateFN } from "../types";
+import type { Preset, Prettify, ResonateFN } from "../types";
 
 interface ShimmerConfig {
   highlight: string;
@@ -76,16 +76,17 @@ export default function (
       };
 
       glare.addEventListener("mousemove", handleMouseMove);
+      glare.addEventListener("mouseleave", handleMouseLeave);
     };
 
     const handleMouseLeave = () => {
       if (stay === false) glare.style.opacity = "0";
 
       glare.removeEventListener("mousemove", handleMouseMove);
+      glare.removeEventListener("mouseleave", handleMouseLeave);
     };
 
     glare.addEventListener("mouseenter", handleMouseEnter);
-    glare.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {};
   };

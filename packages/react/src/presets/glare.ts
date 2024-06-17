@@ -1,5 +1,5 @@
 import { generateRef } from "../lib/utils";
-import type { APIMethods, Preset, Prettify, ResonateFN } from "../types";
+import type { Preset, Prettify, ResonateFN } from "../types";
 
 interface GlareConfig {
   highlight: string;
@@ -57,13 +57,13 @@ export default function (
 
   const resonate: ResonateFN = ({
     getContainerPosition,
-    getDistanceFromCenter,
+    getRelativePositionFromCenter,
   }) => {
     const elmPos = getContainerPosition();
     const glare = extractElementFromRef();
 
     const handleMouseMove = ({ x, y }: MouseEvent) => {
-      const pointer = getDistanceFromCenter({ x, y });
+      const pointer = getRelativePositionFromCenter({ x, y });
 
       glare.style.background = `radial-gradient(
         circle at
@@ -77,14 +77,15 @@ export default function (
     const handleMouseEnter = () => {
       if (stay === false) glare.style.opacity = "1";
       glare.addEventListener("mousemove", handleMouseMove);
+      glare.addEventListener("mouseleave", handleMouseLeave);
     };
     const handleMouseLeave = () => {
       if (stay === false) glare.style.opacity = "0";
       glare.removeEventListener("mousemove", handleMouseMove);
+      glare.removeEventListener("mouseleave", handleMouseLeave);
     };
 
     glare.addEventListener("mouseenter", handleMouseEnter);
-    glare.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {};
   };
