@@ -5,21 +5,27 @@ import { useEffect, useRef } from "react";
 import { bound } from "../utils";
 
 export const InfoBar = () => {
-  const { globalX, globalY } = useGlobal();
   const ref = useRef<HTMLParagraphElement>(null);
+  const { globalX, globalY } = useGlobal();
+
+  const mousePosition = {
+    x: globalX,
+    y: globalY,
+  };
 
   useEffect(() => {
     const elm = ref.current!;
-    const { getRelativePositionFromCenter } = useAPI<HTMLParagraphElement>(ref);
-    const { x, y } = getRelativePositionFromCenter({
-      x: globalX,
-      y: globalY,
-    });
+    const { getRelativePositionFromCenter, getDistanceFromCenter } =
+      useAPI<HTMLParagraphElement>(ref);
+
+    const { x, y } = getRelativePositionFromCenter(mousePosition);
+    const distance = Math.round(1000 / getDistanceFromCenter(mousePosition));
 
     const dx = bound(x / 50, -1, 1);
     const dy = bound(y / 50, -1, 1);
 
-    elm.style.boxShadow = `${dx}px ${dy}px 0 1px #ffffff44`;
+    elm.style.boxShadow = `${dx}px ${dy}px 0 1px rgba(255,255,255,${bound(distance, 0, 6) / 10})`;
+    elm.style.color = `rgba(255,255,255,${bound(distance, 5, 10) / 10})`;
   }, [globalX, globalY]);
 
   return (
