@@ -1,9 +1,7 @@
+import type { EventKeys, Listener } from "../types";
+
 export class EventManager {
   private _events: Function[] = [];
-
-  public get events(): Function[] {
-    return this._events;
-  }
 
   public addFunction(input: Function | Function[]) {
     if (Array.isArray(input)) {
@@ -13,9 +11,18 @@ export class EventManager {
     }
   }
 
-  public executeAll(reset: boolean = false): any[] {
+  public addEvent<T extends HTMLElement, E extends EventKeys>(
+    target: T,
+    event: E,
+    listener: Listener<E>,
+  ) {
+    target.addEventListener(event, listener);
+    this.addFunction(() => target.removeEventListener(event, listener));
+  }
+
+  public executeAll(): any[] {
     const result = this._events.map((func) => func());
-    if (reset === true) this._events = [];
+    this._events = [];
     return result;
   }
 }
