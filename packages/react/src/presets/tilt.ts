@@ -1,6 +1,7 @@
-import type { APIMethods, Preset, Prettify, ResonateFN } from "../types";
+import type { Preset, Prettify, ResonateFN } from "../types";
 
-interface FloatConfig {
+interface TiltConfig {
+  power: number;
   shadowColor: string;
   shadowOffset: number;
   shadowOffsetX: number;
@@ -8,32 +9,36 @@ interface FloatConfig {
 }
 
 const baseConfig = {
+  power: 3,
   shadowColor: "#00000077",
   shadowOffset: 25,
 } as const;
 
 export default function (
-  configs?: Prettify<Partial<FloatConfig>>,
+  configs?: Prettify<Partial<TiltConfig>>,
 ): Preset<HTMLDivElement> {
-  const { shadowColor, shadowOffsetX, shadowOffsetY } = {
+  const { power, shadowColor, shadowOffsetX, shadowOffsetY } = {
     ...baseConfig,
     shadowOffsetX: configs?.shadowOffset ?? baseConfig.shadowOffset,
     shadowOffsetY: configs?.shadowOffset ?? baseConfig.shadowOffset,
     ...configs,
   };
 
-  const resonate: ResonateFN = ({ getContainer, getDistanceFromCenter }) => {
+  const resonate: ResonateFN = ({
+    getContainer,
+    getRelativePositionFromCenter,
+  }) => {
     const container = getContainer();
 
     const handleMouseMove = ({ x, y }: MouseEvent) => {
-      const pointer = getDistanceFromCenter({ x, y });
+      const pointer = getRelativePositionFromCenter({ x, y });
       const distance = Math.sqrt(pointer.x ** 2 + pointer.y ** 2);
 
       container.style.transform = `rotate3d(
           ${pointer.y / 500},
           ${-pointer.x / 500},
           0,
-          ${Math.log(distance) * 3}deg)
+          ${Math.log(distance) * power}deg)
         `;
 
       container.style.filter = `drop-shadow(
@@ -47,16 +52,17 @@ export default function (
     const handleMouseEnter = () => {
       container.style.transition = "none";
       container.addEventListener("mousemove", handleMouseMove);
+      container.addEventListener("mouseleave", handleMouseLeave);
     };
     const handleMouseLeave = () => {
       container.style.transition = "transform 300ms, filter 300ms";
       container.style.transform = "";
       container.style.filter = "";
       container.removeEventListener("mousemove", handleMouseMove);
+      container.removeEventListener("mouseleave", handleMouseLeave);
     };
 
     container.addEventListener("mouseenter", handleMouseEnter);
-    container.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {};
   };
