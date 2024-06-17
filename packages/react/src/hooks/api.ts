@@ -1,5 +1,9 @@
 import type { RefObject } from "react";
-import { calculateAngle, getRelativePosition } from "../lib/utils";
+import {
+  calculateAngle,
+  calculateMagnitude,
+  getRelativePosition,
+} from "../lib/utils";
 import type { APIMethods, Vector } from "../types";
 
 export const useAPI = <T extends HTMLElement>(
@@ -26,21 +30,16 @@ export const useAPI = <T extends HTMLElement>(
   const getDistanceFromCenter: APIMethods<T>["getDistanceFromCenter"] = (
     pointer,
   ) => {
-    const elm = getContainerPosition();
-    const left = pointer.x - elm.x;
-    const top = pointer.y - elm.y;
-    return {
-      x: left - elm.width / 2,
-      y: top - elm.height / 2,
-    };
+    const { x, y } = getRelativePositionFromCenter(pointer);
+    return calculateMagnitude({ x, y });
   };
 
   const getRelativePositionFromCenter: APIMethods<T>["getRelativePositionFromCenter"] =
     (pointer: Vector) => {
-      const { x, y } = getCenterPosition();
+      const center = getCenterPosition();
       return {
-        x: pointer.x - x,
-        y: pointer.y - y,
+        x: pointer.x - center.x,
+        y: pointer.y - center.y,
       };
     };
 
