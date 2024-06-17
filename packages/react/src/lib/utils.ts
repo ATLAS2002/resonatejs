@@ -21,7 +21,7 @@ export const generateRef = <T>(title?: string) => {
   };
 };
 
-export const calculateDistance = ({ x, y }: Vector) =>
+export const calculateMagnitude = ({ x, y }: Vector) =>
   Math.sqrt(x ** 2 + y ** 2);
 
 export const calculateAngle = (
@@ -40,8 +40,8 @@ export const calculateAngle = (
 
   const dotProduct = base.x * incident.x + base.y * incident.y;
 
-  const baseMagnitude = calculateDistance(base);
-  const incomingMagnitude = calculateDistance(incident);
+  const baseMagnitude = calculateMagnitude(base);
+  const incomingMagnitude = calculateMagnitude(incident);
 
   const cosine = dotProduct / (baseMagnitude * incomingMagnitude);
   return (Math.acos(cosine) * 180) / Math.PI;
@@ -52,3 +52,6 @@ export const getRelativePosition = (l: number, u: number, x: number) => {
   else if (x < l) return x - l;
   else return x - u;
 };
+
+export const getCyclicValue = (value: number, range: number) =>
+  Math.round(value + range) % range;
