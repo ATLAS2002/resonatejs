@@ -17,7 +17,7 @@ export const Card = ({
 
   const trackers = useResonate({
     presets: [glare(), tilt()],
-    customEventListeners: () => ({
+    listeners: () => ({
       mouseenter: () => {
         setShowLink(true);
       },

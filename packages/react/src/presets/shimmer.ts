@@ -1,5 +1,5 @@
-import { generateRef } from "../lib/utils";
-import type { Preset, Prettify, ResonateFN } from "../types";
+import { useRef } from "react";
+import type { Preset, Prettify } from "../types";
 
 interface ShimmerConfig {
   highlight: string;
@@ -26,74 +26,67 @@ const baseConfig = {
   stay: false,
 } as const;
 
-export default function (
-  configs?: Prettify<Partial<ShimmerConfig>>,
-): Preset<HTMLDivElement> {
+const Shimmer: Preset<HTMLDivElement, ShimmerConfig> = (configs) => {
   const { highlight, shadow, angle, width, speed, offset, fade, stay } = {
     ...baseConfig,
     ...configs,
   };
 
-  const { refObj: glareRef, extractElementFromRef } =
-    generateRef<HTMLDivElement>("glare");
+  const glowRef = useRef<HTMLDivElement>(null);
 
-  let position: { x: number; y: number; angle: number };
+  return {
+    title: "glowLayer",
+    ref: glowRef,
+    resonate({ getAngle, getProgress, getCenterPosition }) {
+      const glowLayer = glowRef.current!;
+      let position: { x: number; y: number; angle: number };
 
-  const resonate: ResonateFN = ({
-    getAngle,
-    getProgress,
-    getCenterPosition,
-  }) => {
-    const glare = extractElementFromRef();
+      const handleMouseMove = ({ x, y }: MouseEvent) => {
+        const progress = Math.round(
+          getProgress({ x: position.x, y: position.y }, getCenterPosition(), {
+            x,
+            y,
+          }) *
+            100 *
+            speed,
+        );
 
-    const handleMouseMove = ({ x, y }: MouseEvent) => {
-      const progress = Math.round(
-        getProgress({ x: position.x, y: position.y }, getCenterPosition(), {
-          x,
-          y,
-        }) *
-          100 *
-          speed,
-      );
+        if (fade !== 0)
+          glowLayer.style.opacity = `${1 - progress / (100 * fade)}`;
 
-      if (fade !== 0) glare.style.opacity = `${1 - progress / (100 * fade)}`;
-
-      glare.style.background = `linear-gradient(
+        glowLayer.style.background = `linear-gradient(
           ${position.angle}deg,
           ${shadow} ${progress - width / 2 + offset}%,
           ${highlight} ${progress + offset}%,
           ${shadow} ${progress + width / 2 + offset}%
         )`;
-    };
-
-    const handleMouseEnter = ({ x, y }: MouseEvent) => {
-      glare.style.opacity = "1";
-
-      position = {
-        x,
-        y,
-        angle: angle === "auto" ? getAngle({ x, y }) : angle,
       };
 
-      glare.addEventListener("mousemove", handleMouseMove);
-      glare.addEventListener("mouseleave", handleMouseLeave);
-    };
+      const handleMouseEnter = ({ x, y }: MouseEvent) => {
+        glowLayer.style.opacity = "1";
 
-    const handleMouseLeave = () => {
-      if (stay === false) glare.style.opacity = "0";
+        position = {
+          x,
+          y,
+          angle: angle === "auto" ? getAngle({ x, y }) : angle,
+        };
 
-      glare.removeEventListener("mousemove", handleMouseMove);
-      glare.removeEventListener("mouseleave", handleMouseLeave);
-    };
+        glowLayer.addEventListener("mousemove", handleMouseMove);
+        glowLayer.addEventListener("mouseleave", handleMouseLeave);
+      };
 
-    glare.addEventListener("mouseenter", handleMouseEnter);
+      const handleMouseLeave = () => {
+        if (stay === false) glowLayer.style.opacity = "0";
 
-    return () => {};
+        glowLayer.removeEventListener("mousemove", handleMouseMove);
+        glowLayer.removeEventListener("mouseleave", handleMouseLeave);
+      };
+
+      glowLayer.addEventListener("mouseenter", handleMouseEnter);
+
+      return () => {};
+    },
   };
+};
 
-  return {
-    title: "glare",
-    ref: glareRef,
-    resonate,
-  };
-}
+export default Shimmer;

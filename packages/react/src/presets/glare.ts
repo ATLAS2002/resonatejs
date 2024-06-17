@@ -1,5 +1,5 @@
-import { generateRef } from "../lib/utils";
-import type { Preset, Prettify, ResonateFN } from "../types";
+import { useRef } from "react";
+import type { Preset, Prettify } from "../types";
 
 interface GlareConfig {
   highlight: string;
@@ -30,9 +30,7 @@ const baseConfig = {
   stay: false,
 } as const;
 
-export default function (
-  configs?: Prettify<Partial<GlareConfig>>,
-): Preset<HTMLDivElement> {
+const Glare: Preset<HTMLDivElement, GlareConfig> = (configs) => {
   const {
     highlight,
     shadow,
@@ -52,47 +50,43 @@ export default function (
     ...configs,
   };
 
-  const { refObj: glareRef, extractElementFromRef } =
-    generateRef<HTMLDivElement>("glare");
+  const glowRef = useRef<HTMLDivElement>(null);
 
-  const resonate: ResonateFN = ({
-    getContainerPosition,
-    getRelativePositionFromCenter,
-  }) => {
-    const elmPos = getContainerPosition();
-    const glare = extractElementFromRef();
+  return {
+    title: "glowLayer",
+    ref: glowRef,
+    resonate({ getContainerPosition, getRelativePositionFromCenter }) {
+      const elmPos = getContainerPosition();
+      const glowLayer = glowRef.current!;
 
-    const handleMouseMove = ({ x, y }: MouseEvent) => {
-      const pointer = getRelativePositionFromCenter({ x, y });
+      const handleMouseMove = ({ x, y }: MouseEvent) => {
+        const pointer = getRelativePositionFromCenter({ x, y });
 
-      glare.style.background = `radial-gradient(
+        glowLayer.style.background = `radial-gradient(
         circle at
         ${pointer.x * speedX + elmPos.width / offsetX}px
         ${pointer.y * speedY + elmPos.height / offsetY}px,
         ${highlight} ${radius},
         ${shadow} ${dispersion}
       )`;
-    };
+      };
 
-    const handleMouseEnter = () => {
-      if (stay === false) glare.style.opacity = "1";
-      glare.addEventListener("mousemove", handleMouseMove);
-      glare.addEventListener("mouseleave", handleMouseLeave);
-    };
-    const handleMouseLeave = () => {
-      if (stay === false) glare.style.opacity = "0";
-      glare.removeEventListener("mousemove", handleMouseMove);
-      glare.removeEventListener("mouseleave", handleMouseLeave);
-    };
+      const handleMouseEnter = () => {
+        if (stay === false) glowLayer.style.opacity = "1";
+        glowLayer.addEventListener("mousemove", handleMouseMove);
+        glowLayer.addEventListener("mouseleave", handleMouseLeave);
+      };
+      const handleMouseLeave = () => {
+        if (stay === false) glowLayer.style.opacity = "0";
+        glowLayer.removeEventListener("mousemove", handleMouseMove);
+        glowLayer.removeEventListener("mouseleave", handleMouseLeave);
+      };
 
-    glare.addEventListener("mouseenter", handleMouseEnter);
+      glowLayer.addEventListener("mouseenter", handleMouseEnter);
 
-    return () => {};
+      return () => {};
+    },
   };
+};
 
-  return {
-    title: "glare",
-    ref: glareRef,
-    resonate,
-  };
-}
+export default Glare;

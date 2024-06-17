@@ -40,18 +40,21 @@ export type APIMethods<T extends HTMLElement> = Prettify<{
   getMinDistanceFromBoundary: FuncWithParams<number, [Vector]>;
 }>;
 
-export type Preset<T extends HTMLElement> = {
-  title?: string;
-  ref?: RefObject<T>;
-  resonate: (api: Required<APIMethods<T>>) => Callback;
-};
-export type ResonateFN<T extends HTMLElement = HTMLDivElement> = (
+export type ResonateFN<T extends HTMLElement> = (
   api: APIMethods<T>,
 ) => Callback;
+export type PresetYield<T extends HTMLElement> = {
+  title?: string;
+  ref?: RefObject<T>;
+  resonate: ResonateFN<T>;
+};
+export type Preset<T extends HTMLElement, C extends object> = (
+  config?: Prettify<Partial<C>>,
+) => PresetYield<T>;
 
 export type EventKeys = keyof GlobalEventHandlersEventMap;
 export type EventType<E extends EventKeys> = GlobalEventHandlersEventMap[E];
-export type Listener<E extends EventKeys> = FuncWithParams<
+export type ListenerFn<E extends EventKeys> = FuncWithParams<
   void,
   [EventType<E>]
 >;
@@ -60,9 +63,9 @@ export type Listener<E extends EventKeys> = FuncWithParams<
  * @param api methods provided by the hook
  * @description return a object containing pair of event name and event listener
  */
-export type CustomEventListener<ContainerType extends HTMLElement> = (
+export type Listener<ContainerType extends HTMLElement> = (
   api: APIMethods<ContainerType>,
-) => Partial<{ [Event in EventKeys]: Listener<Event> }>;
+) => Partial<{ [Event in EventKeys]: ListenerFn<Event> }>;
 
 /**
  * @description Entire configuration for the resonate hook
@@ -70,6 +73,6 @@ export type CustomEventListener<ContainerType extends HTMLElement> = (
  * @param customEventListeners use custom event listeners seamlessly with the robust API
  */
 export type Config<ContainerType extends HTMLElement> = Prettify<{
-  presets: Preset<ContainerType>[];
-  customEventListeners: CustomEventListener<ContainerType>;
+  presets: PresetYield<ContainerType>[];
+  listeners: Listener<ContainerType>;
 }>;

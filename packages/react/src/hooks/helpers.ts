@@ -3,50 +3,20 @@ import type {
   Callback,
   Config,
   Trackers,
-  Listener,
+  ListenerFn,
   EventKeys,
   APIMethods,
-  FuncWithParams,
+  Func,
 } from "../types";
 
-type EventListener = [EventKeys, Listener<EventKeys>];
+type EventListener = [EventKeys, ListenerFn<EventKeys>];
 
 export const useConfig = <T extends HTMLElement>(
   api: Required<APIMethods<T>>,
   config: Partial<Config<T>>,
 ) => {
-  /**
-   * @param eventListeners collection of user defined event listeners
-   * @returns methods to add and remove listeners
-   */
-  const applyCustomEventListeners = (
-    eventListeners = config.customEventListeners,
-  ) => {
-    const eventManager = new EventManager();
-
-    /**
-     * @description adds all listeners
-     * @param target the html element that all these listeners are being applied on
-     */
-    const addCustomEventListeners: FuncWithParams<void, [T]> = (target) => {
-      if (!eventListeners) return;
-      for (const eventListener of Object.entries(eventListeners(api))) {
-        const [event, listener] = eventListener as EventListener;
-
-        eventManager.addEvent(target, event, listener);
-      }
-    };
-    /**
-     * @description removes all listeners
-     */
-    const removeCustomEventListeners: Callback = () => {
-      eventManager.executeAll();
-    };
-
-    return { addCustomEventListeners, removeCustomEventListeners };
-  };
-
-  const applyPresets = (presets = config.presets ?? []) => {
+  const applyPresets = () => {
+    const presets = config.presets ?? [];
     const trackers: Partial<Trackers> = {};
 
     const presetManager = new EventManager();
@@ -56,24 +26,45 @@ export const useConfig = <T extends HTMLElement>(
       presetManager.addFunction(() => resonate(api));
     }
 
-    const activatePresets: Callback = () => {
+    const activate = () => {
       const cleanup: Function[] = presetManager.executeAll();
       presetManager.addFunction(cleanup);
     };
 
-    const deactivatePresets: Callback = () => {
+    const deactivate = () => {
       presetManager.executeAll();
     };
 
     return {
       trackers,
-      activatePresets,
-      deactivatePresets,
+      activate,
+      deactivate,
     };
+  };
+
+  const applyListeners = (getTarget: Func<T | null>) => {
+    const eventManager = new EventManager();
+
+    const activate = () => {
+      const target = getTarget();
+      if (!config.listeners || !target) return;
+
+      for (const eventListener of Object.entries(config.listeners(api))) {
+        const [event, listener] = eventListener as EventListener;
+
+        eventManager.addEvent(target, event, listener);
+      }
+    };
+
+    const deactivate = () => {
+      eventManager.executeAll();
+    };
+
+    return { activate, deactivate };
   };
 
   return {
     applyPresets,
-    applyCustomEventListeners,
+    applyListeners,
   };
 };

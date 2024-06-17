@@ -4,14 +4,14 @@ import { ResonateProvider } from "@resonatejs/react";
 import {
   useRef,
   createContext,
+  useState,
   type FC,
   type ReactNode,
-  RefObject,
-  useState,
-  Dispatch,
-  SetStateAction,
+  type RefObject,
+  type Dispatch,
+  type SetStateAction,
 } from "react";
-import { Cursor } from "./cursor";
+import { Trailer } from "./trailer";
 
 interface IContext {
   cursorRef: RefObject<HTMLDivElement> | null;
@@ -32,7 +32,7 @@ export const Background: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <ResonateProvider>
       <Context.Provider value={{ cursorRef, showLink, setShowLink }}>
-        <Cursor ref={cursorRef} />
+        <Trailer ref={cursorRef} />
         {children}
       </Context.Provider>
     </ResonateProvider>

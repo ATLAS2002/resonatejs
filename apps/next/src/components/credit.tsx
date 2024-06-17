@@ -31,7 +31,7 @@ export const Credit = () => {
   const hiddenLayer = useRef<HTMLAnchorElement>(null);
   const cursorRef = useContext(Context).cursorRef;
   const trackers = useResonate({
-    customEventListeners: () => {
+    listeners: () => {
       const cursor = cursorRef?.current!;
       const mask = hiddenLayer.current!;
       const container = mask.getBoundingClientRect();

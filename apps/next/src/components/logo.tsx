@@ -35,7 +35,7 @@ export const Logo = () => {
 
   const trackers = useResonate({
     presets: [shimmer()],
-    customEventListeners: () => {
+    listeners: () => {
       const cursor = cursorRef?.current!;
 
       return {

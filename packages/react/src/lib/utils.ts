@@ -1,25 +1,4 @@
-import { useRef } from "react";
 import type { Vector } from "../types";
-
-export const generateRef = <T>(title?: string) => {
-  const refObj = useRef<T>(null);
-
-  return {
-    refObj,
-    extractElementFromRef: (throwErr = true): T | never => {
-      const elm = refObj.current;
-      if (!elm && throwErr === true) {
-        const errorMessage = String.raw`Inject the ref object${
-          title ? ": " + title + "," : ""
-        } to the proper component`;
-
-        throw new Error(errorMessage);
-      }
-
-      return elm as T;
-    },
-  };
-};
 
 export const calculateMagnitude = ({ x, y }: Vector) =>
   Math.sqrt(x ** 2 + y ** 2);

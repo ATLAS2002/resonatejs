@@ -42,12 +42,12 @@ export const ResonateContainer: React.FC<Props<HTMLDivElement>> = ({
       >
         {children}
       </div>
-      {trackers.glare && <Glare ref={trackers.glare} />}
+      {trackers.glowLayer && <GlowLayer ref={trackers.glowLayer} />}
     </div>
   );
 };
 
-export const Glare = React.forwardRef<HTMLDivElement>((_, ref) => (
+export const GlowLayer = React.forwardRef<HTMLDivElement>((_, ref) => (
   <div
     ref={ref}
     style={{

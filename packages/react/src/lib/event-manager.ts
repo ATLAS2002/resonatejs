@@ -1,4 +1,4 @@
-import type { EventKeys, Listener } from "../types";
+import type { EventKeys, ListenerFn } from "../types";
 
 export class EventManager {
   private _events: Function[] = [];
@@ -14,7 +14,7 @@ export class EventManager {
   public addEvent<T extends HTMLElement, E extends EventKeys>(
     target: T,
     event: E,
-    listener: Listener<E>,
+    listener: ListenerFn<E>,
   ) {
     target.addEventListener(event, listener);
     this.addFunction(() => target.removeEventListener(event, listener));
