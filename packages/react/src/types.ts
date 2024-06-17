@@ -23,8 +23,7 @@ export type FuncWithParams<ReturnType, ParamsType extends any[]> = (
   ...args: ParamsType
 ) => ReturnType;
 
-export type RefTitle = string & ("container" | "glare");
-export type Trackers = Prettify<Record<RefTitle, RefObject<any>>>;
+export type Trackers = Prettify<Record<string, RefObject<any>>>;
 
 /**
  * @description All API functions that are available with the hook
@@ -35,14 +34,14 @@ export type APIMethods<T extends HTMLElement> = Prettify<{
   getContainer: Func<T>;
   getCenterPosition: Func<Vector>;
   getContainerPosition: Func<DOMRect>;
-  getDistanceFromCenter: FuncWithParams<Vector, [Vector]>;
+  getDistanceFromCenter: FuncWithParams<number, [Vector]>;
   getRelativePositionFromCenter: FuncWithParams<Vector, [Vector]>;
   getRelativePositionFromBoundary: FuncWithParams<Vector, [Vector]>;
   getMinDistanceFromBoundary: FuncWithParams<number, [Vector]>;
 }>;
 
 export type Preset<T extends HTMLElement> = {
-  title?: RefTitle;
+  title?: string;
   ref?: RefObject<T>;
   resonate: (api: Required<APIMethods<T>>) => Callback;
 };

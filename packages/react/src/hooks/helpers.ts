@@ -1,25 +1,26 @@
 import { EventManager } from "../lib/event-manager";
 import type {
-  Preset,
   Callback,
+  Config,
   Trackers,
   Listener,
   EventKeys,
   APIMethods,
   FuncWithParams,
-  CustomEventListener,
 } from "../types";
 
 type EventListener = [EventKeys, Listener<EventKeys>];
 
-export const useConfig = <T extends HTMLElement>() => {
+export const useConfig = <T extends HTMLElement>(
+  api: Required<APIMethods<T>>,
+  config: Partial<Config<T>>,
+) => {
   /**
    * @param eventListeners collection of user defined event listeners
    * @returns methods to add and remove listeners
    */
   const applyCustomEventListeners = (
-    eventListeners: CustomEventListener<T> | undefined,
-    api: Required<APIMethods<T>>,
+    eventListeners = config.customEventListeners,
   ) => {
     const eventManager = new EventManager();
 
@@ -32,13 +33,7 @@ export const useConfig = <T extends HTMLElement>() => {
       for (const eventListener of Object.entries(eventListeners(api))) {
         const [event, listener] = eventListener as EventListener;
 
-        // console.log(`Event: "${event}" is mounted`);
-        target.addEventListener(event, listener);
-
-        eventManager.addFunction(() => {
-          // console.log(`Event: "${event}" is unmounted`);
-          target.removeEventListener(event, listener);
-        });
+        eventManager.addEvent(target, event, listener);
       }
     };
     /**
@@ -51,10 +46,7 @@ export const useConfig = <T extends HTMLElement>() => {
     return { addCustomEventListeners, removeCustomEventListeners };
   };
 
-  const applyPresets = (
-    presets: Preset<T>[] = [],
-    api: Required<APIMethods<T>>,
-  ) => {
+  const applyPresets = (presets = config.presets ?? []) => {
     const trackers: Partial<Trackers> = {};
 
     const presetManager = new EventManager();
@@ -65,7 +57,7 @@ export const useConfig = <T extends HTMLElement>() => {
     }
 
     const activatePresets: Callback = () => {
-      const cleanup: Function[] = presetManager.executeAll(true);
+      const cleanup: Function[] = presetManager.executeAll();
       presetManager.addFunction(cleanup);
     };
 
