@@ -1,3 +1,5 @@
+# Resonate.js
+### A modern minimalist cursor-based animation library for the Javascript ecosystem.
 <div align="center">
   
 [![Npm version](https://img.shields.io/npm/v/@resonatejs/react?style=for-the-badge&logo=npm)](www.npmjs.com/package/@resonatejs/react)
@@ -13,3 +15,32 @@
 </div>
 
 https://github.com/ATLAS2002/resonatejs/assets/123821746/bc1e7b71-77a5-42bc-9ce5-5ab475658e91
+
+# Table of Contents 📖
+- [Features](https://github.com/ATLAS2002/resonatejs/blob/main/README.md#features)
+- [Installation](https://github.com/ATLAS2002/resonatejs/blob/main/README.md#installation)
+
+# Features 🚀
+- ✨ **Modern :** get support for your modern frameworks.
+- 💼 **Customisation :** have complete control over the code.
+- 🛍️ **Presets :** use popular presets right out of the box.
+- 💻 **API :** offering a comprehensive interface to work with the DOM.
+- 🪶 **Zero Dependancies :** don't waste a byte on some code you don't need.
+
+# Installation 📦
+##### via [NPM](https://docs.npmjs.com/cli/v10/commands/npm-install)
+```sh
+npm install --save @resonate/react
+```
+##### via [Yarn](https://classic.yarnpkg.com/lang/en/docs/cli/add)
+```sh
+yarn add @resonate/react
+```
+##### via [PNPM](https://pnpm.io/cli/add)
+```sh
+pnpm add @resonate/react
+```
+##### via [Bun](https://bun.sh/docs/cli/add)
+```sh
+bun add @resonate/react
+```
