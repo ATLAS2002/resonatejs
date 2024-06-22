@@ -1,16 +1,30 @@
 {
   "name": "@resonatejs/react",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": false,
-  "description": "",
+  "description": "Official React bindings for Resonate",
   "main": "src/index.tsx",
   "scripts": {
     "lint": "eslint .",
     "type-check": "tsc --noEmit"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "react",
+    "nextjs",
+    "resonatejs",
+    "state management",
+    "react components",
+    "react hooks",
+    "ui components",
+    "web development",
+    "javascript",
+    "typescript",
+    "animations",
+    "cursor",
+    "dom events"
+  ],
+  "author": "ATLAS2002 <siddharth211102@gmail.com>",
+  "license": "MIT",
   "devDependencies": {
     "@config/eslint": "workspace:*",
     "@config/typescript": "workspace:*",
