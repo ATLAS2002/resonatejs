@@ -11,6 +11,7 @@
     "type-check": "turbo type-check"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.27.5",
     "@config/eslint": "workspace:*",
     "@config/typescript": "workspace:*",
     "prettier": "^3.2.5",
