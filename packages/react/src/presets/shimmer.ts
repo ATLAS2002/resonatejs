@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import type { Preset, Prettify } from "../types";
+import type { Preset } from "../types";
 
 interface ShimmerConfig {
   highlight: string;

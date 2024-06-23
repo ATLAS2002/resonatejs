@@ -2,7 +2,7 @@
   "extends": "@config/typescript/react-library.json",
   "compilerOptions": {
     "jsx": "react",
-    "outDir": "dist",
+    "declarationDir": "dist",
     "esModuleInterop": true
   },
   "include": ["src"],

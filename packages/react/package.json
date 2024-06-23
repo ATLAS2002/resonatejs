@@ -1,13 +1,31 @@
 {
   "name": "@resonatejs/react",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "private": false,
   "description": "Official React bindings for Resonate",
-  "main": "src/index.tsx",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "node esbuild.js",
+    "postbuild": "tsc --emitDeclarationOnly",
+    "cleanup": "rimraf dist package",
+    "check": "npm pack && tar -zxvf *.tgz && rimraf *.tgz",
     "lint": "eslint .",
     "type-check": "tsc --noEmit"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ATLAS2002/resonatejs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ATLAS2002/resonatejs/issues"
+  },
+  "homepage": "https://github.com/ATLAS2002/resonatejs",
+  "files": [
+    "/dist",
+    "/src"
+  ],
   "keywords": [
     "react",
     "nextjs",
@@ -30,10 +48,11 @@
     "@config/typescript": "workspace:*",
     "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
+    "esbuild": "^0.21.5",
     "eslint": "^8.53.0",
-    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "rimraf": "^5.0.7",
     "typescript": "^5.2.2"
   },
   "peerDependencies": {

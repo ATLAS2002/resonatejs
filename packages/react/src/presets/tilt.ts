@@ -1,4 +1,4 @@
-import type { Preset, Prettify } from "../types";
+import type { Preset } from "../types";
 
 interface TiltConfig {
   power: number;
