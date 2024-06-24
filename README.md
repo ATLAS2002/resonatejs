@@ -16,18 +16,23 @@
 
 https://github.com/ATLAS2002/resonatejs/assets/123821746/bc1e7b71-77a5-42bc-9ce5-5ab475658e91
 
-# Table of Contents 📖
+## Table of Contents 📖
 - [Features](#features-)
 - [Installation](#installation-)
+- [Usage](#usage-)
+- [Architecture](#architecture-)
 
-# Features 🚀
+## Features 🚀
+- 🧩 **Ease of use :** write less, do more.
 - ✨ **Modern :** get support for your modern frameworks.
 - 💼 **Customisation :** have complete control over the code.
 - 🛍️ **Presets :** use popular presets right out of the box.
 - 💻 **API :** offering a comprehensive interface to work with the DOM.
+- 💉 **Injectable :** use Resonate without changing existing code.
+- 🛡️ **Typescript :** get full typescript support.
 - 🪶 **Zero Dependancies :** don't waste a byte on some code you don't need.
 
-# Installation 📦
+## Installation 📦
 ##### via [NPM](https://docs.npmjs.com/cli/v10/commands/npm-install)
 ```sh
 npm install --save @resonate/react
