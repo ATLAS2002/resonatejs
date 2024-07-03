@@ -49,3 +49,55 @@ pnpm add @resonate/react
 ```sh
 bun add @resonate/react
 ```
+
+## Usage 🔌
+### Presets
+```tsx
+import { tilt, glare, useResonate, ResonateContainer } from "@resonatejs/react";
+
+export const Card: React.FC = () => {
+  const trackers = useResonate({
+    presets: [glare(), tilt(), ...] // all your presets go here
+  });
+
+  return (
+    <ResonateContainer
+      className="..."
+      trackers={trackers}
+    >
+      Try it out!
+    </ResonateContainer>
+  );
+}
+
+```
+
+### Listeners
+```tsx
+import { useResonate, ResonateContainer } from "@resonatejs/react";
+
+export const Card: React.FC = () => {
+  const trackers = useResonate({
+    // access the rich API
+    listeners: ({ getCenterPosition }) => {
+      const { x, y } = getCenterPosition();
+      // return all the event listeners
+      return {
+        mousemove({ clientX, clientY }) {
+          console.log(clientX - x, clientY - y);
+        },
+      };
+    },
+  });
+
+  return (
+    <ResonateContainer
+      className="h-full w-full py-24 text-zinc-300 ring-2 ring-zinc-600 text-center text-7xl text-wrap rounded-xl font-mono bg-zinc-900"
+      trackers={trackers}
+    >
+      Try it out!
+    </ResonateContainer>
+  );
+};
+
+```
